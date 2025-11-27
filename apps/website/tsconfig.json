@@ -14,5 +14,15 @@
     "baseUrl": "."
   },
   "include": ["./**/*.ts", "./**/*.vue"],
-  "exclude": ["node_modules", "nuxt.config.ts"]
+  "exclude": [
+    "node_modules",
+    "nuxt.config.ts",
+    "tests",
+    "tests/**",
+    "playwright.config.ts",
+    "**/*.spec.ts",
+    "tests/**/*.ts",
+    "tests/**/*.spec.ts",
+    "tests/fixtures/**"
+  ]
 }
