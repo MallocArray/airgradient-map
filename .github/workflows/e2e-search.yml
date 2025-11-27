@@ -23,6 +23,11 @@ jobs:
         with:
           node-version: '20'
 
+      - name: "NOTE: package-lock / reproducible installs"
+        run: |
+          echo "NOTICE: This workflow uses 'npm install' to ensure devDependencies like Playwright are available even when package-lock.json is out of sync."
+          echo "Recommended: Locally run 'npm install' in apps/website and commit the updated package-lock.json, then change this workflow to use 'npm ci' for deterministic installs."
+
       - name: Create dev env file for compose
         run: cp apps/api/.env.development.example apps/api/.env.development
 
@@ -44,7 +49,8 @@ jobs:
       - name: Install Playwright and browsers
         working-directory: apps/website
         run: |
-          npm ci
+          # Use npm install here to avoid failing when package-lock.json is out of sync with package.json
+          npm install --no-audit --no-fund
           npx playwright install --with-deps
 
       - name: Run Playwright tests
