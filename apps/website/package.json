@@ -20,6 +20,7 @@
     "add:ios": "test -d ios || npx cap add ios",
     "add:android": "test -d ios || npx cap add android",
     "preview": "nuxt preview",
+    "test:e2e": "npx playwright test --config=playwright.config.ts",
     "postinstall": "nuxt prepare",
     "format:check": "npx prettier --check \"**/*.{js,ts,vue,json}\"",
     "format": "npx prettier --write \"**/*.{js,ts,vue,json}\"",
@@ -72,6 +73,7 @@
     "prettier": "^3.5.3",
     "vite-plugin-vuetify": "^2.1.0",
     "vue-eslint-parser": "^10.1.3",
+    "playwright": "^1.44.0",
     "vuetify": "^3.8.5"
   }
 }

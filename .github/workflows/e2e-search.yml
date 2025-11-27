@@ -1,0 +1,49 @@
+name: "E2E: Map search"
+
+on:
+  push:
+    paths:
+      - 'apps/website/**'
+      - '.github/workflows/**'
+  pull_request:
+    paths:
+      - 'apps/website/**'
+      - '.github/workflows/**'
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: apps/website
+        run: npm ci
+
+      - name: Build website
+        working-directory: apps/website
+        run: npm run build
+
+      - name: Install Playwright browsers
+        working-directory: apps/website
+        run: npx playwright install --with-deps
+
+      - name: Start preview and run Playwright tests
+        working-directory: apps/website
+        run: |
+          npm run preview &
+          # wait for preview to start
+          for i in {1..30}; do
+            if curl -sSf http://localhost:3000 >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          npx playwright test --config=playwright.config.ts
