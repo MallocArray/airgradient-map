@@ -49,6 +49,8 @@ jobs:
       - name: Install Playwright and browsers
         working-directory: apps/website
         run: |
+          # Clean up node_modules from docker build (may have root-owned files)
+          rm -rf node_modules package-lock.json
           # Use npm install here to avoid failing when package-lock.json is out of sync with package.json
           npm install --no-audit --no-fund
           npx playwright install --with-deps
