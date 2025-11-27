@@ -16,12 +16,12 @@ jobs:
     timeout-minutes: 40
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      - name: Use Node.js 20
-        uses: actions/setup-node@v4
+      - name: Use Node.js LTS
+        uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: lts/*
 
       - name: "NOTE: package-lock / reproducible installs"
         run: |
@@ -60,6 +60,15 @@ jobs:
           # Use npm install here to avoid failing when package-lock.json is out of sync with package.json
           npm install --no-audit --no-fund
           npx playwright install --with-deps
+
+      - name: "Debug: show docker compose status and recent logs"
+        run: |
+          echo "---- docker compose ps ----"
+          docker compose -f docker-compose-dev.yml ps || true
+          echo "---- recent website logs (last 200 lines) ----"
+          docker compose -f docker-compose-dev.yml logs --tail=200 app || true
+          echo "---- all service logs (last 200 lines) ----"
+          docker compose -f docker-compose-dev.yml logs --tail=200 || true
 
       - name: Run Playwright tests
         working-directory: apps/website
