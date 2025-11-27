@@ -13,7 +13,7 @@ on:
 jobs:
   e2e:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 40
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -23,27 +23,30 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install dependencies
-        working-directory: apps/website
-        run: npm ci
+      - name: Create dev env file for compose
+        run: cp apps/api/.env.development.example apps/api/.env.development
 
-      - name: Build website
-        working-directory: apps/website
-        run: npm run build
-
-      - name: Install Playwright browsers
-        working-directory: apps/website
-        run: npx playwright install --with-deps
-
-      - name: Start preview and run Playwright tests
-        working-directory: apps/website
+      - name: Bring up services with docker compose (dev)
         run: |
-          npm run preview &
-          # wait for preview to start
-          for i in {1..30}; do
+          docker compose -f docker-compose-dev.yml --env-file apps/api/.env.development up -d --build
+
+      - name: Wait for website to be ready
+        run: |
+          for i in {1..60}; do
             if curl -sSf http://localhost:3000 >/dev/null; then
+              echo "website is up"
               break
             fi
-            sleep 1
+            echo "waiting for website..."
+            sleep 2
           done
-          npx playwright test --config=playwright.config.ts
+
+      - name: Install Playwright and browsers
+        working-directory: apps/website
+        run: |
+          npm ci
+          npx playwright install --with-deps
+
+      - name: Run Playwright tests
+        working-directory: apps/website
+        run: npx playwright test --config=playwright.config.ts

@@ -197,7 +197,7 @@
       const attributionContent = `
       <span style="font-size: 10px; margin-right: 4px;">🇺🇦</span>
       <a target="_blank" href="https://leafletjs.com/">Leaflet</a> |
-            © <a target="_blank" href="https://www.airgradient.com/">AirGradient</a> | 
+            © <a target="_blank" href="https://www.airgradient.com/">AirGradient</a> |
              © <a target="_blank" href="https://openaq.org/">OpenAQ</a>
              `;
 
@@ -230,6 +230,17 @@
         long: mapInstance.getCenter().lng.toFixed(2)
       });
 
+      // Expose map center to tests so e2e tests can assert the map moved
+      try {
+        (window as any).__TEST_MAP_CENTER = {
+          lat: mapInstance.getCenter().lat,
+          lng: mapInstance.getCenter().lng,
+          zoom: mapInstance.getZoom()
+        };
+      } catch (e) {
+        // ignore in non-browser environments
+      }
+
       updateMapDebounced();
     });
 
@@ -259,7 +270,7 @@
     const markerSize = isSensor ? 24 : 36;
 
     const icon: DivIcon = L.divIcon({
-      html: `<div class="ag-marker${!isSensor ? ' is-cluster' : ''}${isReference ? ' is-reference' : ''} ${colorConfig?.textColorClass}" 
+      html: `<div class="ag-marker${!isSensor ? ' is-cluster' : ''}${isReference ? ' is-reference' : ''} ${colorConfig?.textColorClass}"
              style="background-color: ${colorConfig?.bgColor}">
              <span>${Math.round(displayValue)}</span>
            </div>`,

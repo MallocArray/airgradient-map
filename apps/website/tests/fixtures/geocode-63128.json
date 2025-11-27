@@ -1,0 +1,15 @@
+[
+  {
+    "place_id": 223457,
+    "licence": "Data © OpenStreetMap contributors",
+    "osm_type": "node",
+    "osm_id": 222222,
+    "boundingbox": ["38.64", "38.66", "-90.35", "-90.33"],
+    "lat": "38.648",
+    "lon": "-90.342",
+    "display_name": "63128, St. Louis, Missouri, USA",
+    "class": "place",
+    "type": "postcode",
+    "importance": 0.5
+  }
+]
