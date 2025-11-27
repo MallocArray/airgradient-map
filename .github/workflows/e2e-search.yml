@@ -46,6 +46,12 @@ jobs:
             sleep 2
           done
 
+      - name: Fix file permissions for website directory
+        run: |
+          echo "Fixing permissions for apps/website to avoid root-owned build artifacts..."
+          # change ownership to the current runner UID/GID so npm can write files
+          sudo chown -R $(id -u):$(id -g) ./apps/website || true
+
       - name: Install Playwright and browsers
         working-directory: apps/website
         run: |
