@@ -46,6 +46,11 @@ jobs:
             sleep 2
           done
 
+      - name: Display first page of website
+        run: |
+          sleep 5
+          curl http://localhost:3000
+
       - name: Fix file permissions for website directory
         run: |
           echo "Fixing permissions for apps/website to avoid root-owned build artifacts..."
