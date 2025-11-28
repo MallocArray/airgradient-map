@@ -46,10 +46,20 @@ jobs:
             sleep 2
           done
 
-      - name: Display first page of website
+      - name: "Test: Check page title after 20 seconds"
         run: |
-          sleep 5
-          curl http://localhost:3000
+          echo "Waiting 20 seconds for website to fully render..."
+          sleep 20
+          echo "Checking for expected title in first 10 lines..."
+          curl -sSf http://localhost:3000 | head -n 10 | grep -q '<title>AirGradient Global Air Quality Map</title>'
+          if [ $? -eq 0 ]; then
+            echo "✓ Found expected title in page"
+          else
+            echo "✗ Title not found in first 10 lines"
+            echo "First 20 lines of page:"
+            curl -sSf http://localhost:3000 | head -n 20
+            exit 1
+          fi
 
       - name: Fix file permissions for website directory
         run: |
