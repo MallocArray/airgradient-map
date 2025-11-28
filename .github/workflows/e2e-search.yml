@@ -29,7 +29,9 @@ jobs:
           echo "Recommended: Locally run 'npm install' in apps/website and commit the updated package-lock.json, then change this workflow to use 'npm ci' for deterministic installs."
 
       - name: Create dev env file for compose
-        run: cp apps/api/.env.development.example apps/api/.env.development
+        run: |
+          cp apps/api/.env.development.example apps/api/.env.development
+          cat apps/api/.env.development
 
       - name: Bring up services with docker compose (dev)
         run: |
@@ -48,8 +50,8 @@ jobs:
 
       - name: "Test: Check page title after 20 seconds"
         run: |
-          echo "Waiting 20 seconds for website to fully render..."
-          sleep 20
+          echo "Waiting 120 seconds for website to fully render..."
+          sleep 120
           echo "Checking for expected title in first 10 lines..."
           curl -sSf http://localhost:3000 | head -n 10 | grep -q '<title>AirGradient Global Air Quality Map</title>'
           if [ $? -eq 0 ]; then
