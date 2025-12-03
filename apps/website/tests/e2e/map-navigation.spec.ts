@@ -12,11 +12,13 @@ test.describe('Map navigation', () => {
     const mapContainer = page.locator('#map');
     await expect(mapContainer).toBeVisible();
 
-    // Check that the geosearch control is present
-    const geosearchBar = page.locator('.leaflet-geosearch-bar');
-    await expect(geosearchBar).toBeVisible();
+  // Check that the map zoom buttons are visible (usually .leaflet-control-zoom)
+  const zoomInButton = page.locator('.leaflet-control-zoom-in');
+  const zoomOutButton = page.locator('.leaflet-control-zoom-out');
+  await expect(zoomInButton).toBeVisible();
+  await expect(zoomOutButton).toBeVisible();
 
-    console.log('✓ Site loaded successfully with map and geosearch visible');
+    console.log('✓ Site loaded successfully with map visible');
   });
 
   test('map moves to Chicago using URL parameters', async ({ page }) => {
@@ -57,4 +59,35 @@ test.describe('Map navigation', () => {
       console.log('✓ Map container is visible');
     }
   });
+
+    test('map moves when searching for zip code 63127', async ({ page }) => {
+      await page.goto('/', { waitUntil: 'networkidle' });
+
+      // Locate the search bar input
+      const input = page.locator('.leaflet-geosearch-bar input');
+      await expect(input).toBeVisible({ timeout: 10000 });
+
+      // Get initial map center
+      const initialCenter = await page.evaluate(() => (window as any).__TEST_MAP_CENTER || null);
+
+        // Search for zip code 63127 and press Enter to trigger map move
+        await input.fill('63127');
+        await input.press('Enter');
+
+      // Wait for the map center to change
+      await page.waitForFunction(
+        (prev) => {
+          const cur = (window as any).__TEST_MAP_CENTER;
+          if (!cur) return false;
+          if (!prev) return true;
+          return cur.lat !== prev.lat || cur.lng !== prev.lng || cur.zoom !== prev.zoom;
+        },
+        initialCenter,
+        { timeout: 20000 }
+      );
+
+      const centerAfterSearch = await page.evaluate(() => (window as any).__TEST_MAP_CENTER || null);
+      expect(centerAfterSearch).not.toEqual(initialCenter);
+      console.log('✓ Map moved after searching for zip code 63127');
+    });
 });
