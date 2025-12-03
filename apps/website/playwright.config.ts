@@ -9,7 +9,7 @@ const config: PlaywrightTestConfig = {
   use: {
     browserName: 'chromium',
     headless: true,
-    baseURL: 'http://localhost:3000',
+    baseURL: 'http://127.0.0.1:3000',
     viewport: { width: 1280, height: 800 },
     actionTimeout: 20000,
     navigationTimeout: 30000
